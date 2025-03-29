@@ -3,8 +3,34 @@ import pandas as pd
 import os
 import sys
 import csv
+import yagmail
 from datetime import datetime
+from dotenv import load_dotenv
 
+load_dotenv()  # Load .env file
+
+SENDER_EMAIL = os.getenv("EMAIL_USER")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+
+# sending email function
+def send_email(receiver_email, student_name, teacher_name, date):
+    subject = "Attendance Marked Successfully"
+    content = f"""
+    Hello {student_name},
+    
+    Your attendance has been successfully marked.
+    
+    - Date: {date}
+    - Teacher: {teacher_name}
+    - Status: Present
+    
+    Regards,
+    Face Recognition Attendance System
+    """
+    yag = yagmail.SMTP(user=SENDER_EMAIL, password=EMAIL_PASSWORD)
+    yag.send(to=receiver_email, subject=subject, contents=content)
+    print(f"Confirmation email sent to {receiver_email}")
+    
 # Load the face detector and recognizer
 face_detector = cv2.CascadeClassifier("C:\\Users\\abhip\\Desktop\\Minor-Project\\models\\haarcascade_frontalface_default.xml")
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -38,18 +64,19 @@ else:
 # Load registered users from CSV file
 user_data_file = "C:\\Users\\abhip\\Desktop\\Minor-Project\\database\\users.csv"
 user_dict = {}
+email_dict = {}
 
 if os.path.exists(user_data_file):
     with open(user_data_file, "r") as file:
         reader = csv.reader(file)
         for row in reader:
-            if len(row) >= 2:  # Ensure the row has at least two values
+            if len(row) >= 3:  # Ensure the row has at least two values
                 try:
-                    user_dict[int(row[0])] = row[1]  # Store ID -> Name mapping
+                    user_dict[int(row[0])] = row[1]
+                    email_dict[int(row[0])] = row[2]
                 except ValueError:
                     print(f"Skipping invalid row: {row}")  # Handle non-numeric IDs
-            else:
-                print(f"Skipping incomplete row: {row}")
+            
                 
 print(f"Loaded Users: {user_dict}")
 
@@ -80,9 +107,7 @@ while True:
 
         id, confidence = face_recognizer.predict(image_face)
         name = user_dict.get(id)  # Get name from CSV
-        print(f"Loaded User Dictionary: {user_dict}")
-        print(f"Detected ID: {id}, Confidence: {confidence}")
-        print(f"User Dictionary: {user_dict}")
+        email = email_dict.get(id, "")
 
 
         cv2.putText(image, name, (x, y + (h + 30)), font, 2, (0, 0, 255))
@@ -92,7 +117,8 @@ while True:
             attendance_data.append([current_date, current_day, teacher_name, name, "P"])
             marked_students.add(name)
             detection_done = True  # Stop detection after recognizing someone
-
+            if email:
+                send_email(email, name, teacher_name, current_date)   
     cv2.imshow("Face Recognition", image)
 
     if detection_done:  # If detection is complete, break the loop

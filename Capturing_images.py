@@ -10,12 +10,14 @@ face_detector = cv2.CascadeClassifier("C:\\Users\\abhip\\Desktop\\Minor-Project\
 camera = cv2.VideoCapture(0)
 
 # Check if person ID and name are provided
-if len(sys.argv) < 3:
-    print("Error: No user ID or name provided.")
+if len(sys.argv) != 4:
+    print(f"Error: Expected 3 arguments (ID, Name, Email), but got {len(sys.argv)-1}.")
     sys.exit(1)
+
 
 person_id = sys.argv[1]
 person_name = sys.argv[2]
+person_email = sys.argv[3]
 
 # Define the uploads directory
 uploads = "uploads"
@@ -33,7 +35,7 @@ if person_id in existing_ids:
     sys.exit(1)
 
 # Save user data in users.csv
-def save_user(person_id, person_name):
+def save_user(person_id, person_name, person_email):
     file_exists = os.path.exists(user_data_file)
 
     with open(user_data_file, "a", newline="") as file:
@@ -41,11 +43,11 @@ def save_user(person_id, person_name):
 
         # Write header if the file is new
         if not file_exists:
-            writer.writerow(["ID", "Name"])
+            writer.writerow(["ID", "Name","Email"])
 
-        writer.writerow([person_id, person_name])
+        writer.writerow([person_id, person_name, person_email])
 
-save_user(person_id, person_name)
+save_user(person_id, person_name, person_email)
 
 image_count = 0
 
@@ -74,8 +76,8 @@ while True:
 
     cv2.imshow("Capturing Faces", frame)
 
-    # Stop after capturing 50 images per person
-    if image_count >= 10:
+    # Stop after capturing 25 images per person
+    if image_count >= 25:
         break
 
     # Press 'q' to stop manually

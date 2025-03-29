@@ -16,12 +16,12 @@ def home():
 def capture():
     person_id = request.form.get("person_id")
     person_name = request.form.get("person_name")
-
+    person_email = request.form.get("person_email", "default@example.com")
     if not person_id or not person_name:
         return jsonify({"error": "Person ID and Name are required"}), 400
 
     # Run capturing script with person_id and person_name
-    subprocess.Popen(["python", "capturing_images.py", person_id, person_name])
+    subprocess.Popen(["python", "capturing_images.py", person_id, person_name, person_email])
 
     # Redirect to home page after capturing starts
     return redirect(url_for('home'))

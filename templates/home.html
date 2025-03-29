@@ -8,6 +8,7 @@
     <form action="{{ url_for('capture') }}" method="post" class="text-center">
         <input type="text" name="person_id" class="form-control mb-3" placeholder="Enter Unique ID" required>
         <input type="text" name="person_name" class="form-control mb-3" placeholder="Enter Name" required>
+        <input type="email" name="person_email" class="form-control mb-3" placeholder="Enter Email" required>
         <button type="submit" class="btn btn-primary w-100">Capture Image</button>
     </form>
 
@@ -37,4 +38,4 @@
     };
 </script>
 {% endif %}
-{% endblock %}
+{% endblock %} 

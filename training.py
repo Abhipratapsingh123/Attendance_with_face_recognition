@@ -8,14 +8,14 @@ face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 # Load the face detector
 face_detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-dataset_path = "C://Users//abhip//Desktop//Minor-Project//dataset"
 
 # Get all images and their respective IDs
 faces, ids = [], []
 
-for filename in os.listdir(dataset_path):
+uploads = "uploads"
+for filename in os.listdir(uploads):
     if filename.startswith("user"):
-        img_path = os.path.join(dataset_path, filename)
+        img_path = os.path.join(uploads, filename)
         image = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
 
         if image is None:
@@ -32,7 +32,13 @@ for filename in os.listdir(dataset_path):
 # Train the recognizer
 face_recognizer.train(np.asarray(faces, dtype='uint8'), np.array(ids))
 
-# Save the trained model
-face_recognizer.save("lbph_classifier.yml")
+# Create the "models" directory if it doesn't exist
+models_dir = "models"
+if not os.path.exists(models_dir):
+    os.makedirs(models_dir)
 
-print("Training complete. Model saved as 'lbph_classifier.yml'.")
+# Save the trained model inside the "models" folder
+model_path = os.path.join(models_dir, "lbph_classifier.yml")
+face_recognizer.save(model_path)
+
+print(f"Training complete. Model saved as '{model_path}'.")

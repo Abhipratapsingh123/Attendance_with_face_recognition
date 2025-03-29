@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card p-4 shadow-sm">
+    <h2 class="text-center mb-4">Face Registration</h2>
+    <p class="text-center">Enter details and click the button to start capturing images.</p>
+
+    <form action="{{ url_for('capture') }}" method="post" class="text-center">
+        <input type="text" name="person_id" class="form-control mb-3" placeholder="Enter Unique ID" required>
+        <input type="text" name="person_name" class="form-control mb-3" placeholder="Enter Name" required>
+        <button type="submit" class="btn btn-primary w-100">Capture Image</button>
+    </form>
+
+    <hr>
+
+    <form action="{{ url_for('train') }}" method="post" class="text-center">
+        <button type="submit" class="btn btn-warning w-100">Train Model</button>
+    </form>
+
+    <hr>
+
+    <form action="{{ url_for('start_testing') }}" method="post" class="text-center">
+        <input type="text" name="teacher_name" class="form-control mb-3" placeholder="Enter Teacher's Name" required>
+        <button type="submit" class="btn btn-success w-100">Test & Recognize</button>
+    </form>
+</div>
+
+{% if show_popup %} 
+<script>
+    window.onload = function() {
+        let confirmView = confirm("Attendance has been saved successfully! Would you like to open the Excel file?");
+        if (confirmView) {
+            window.location.href = "{{ url_for('open_excel') }}";
+        } else {
+            window.location.href = "{{ url_for('home') }}";
+        }
+    };
+</script>
+{% endif %}
+{% endblock %}

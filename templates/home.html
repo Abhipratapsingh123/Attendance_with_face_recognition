@@ -9,13 +9,13 @@
         <input type="text" name="person_id" class="form-control mb-3" placeholder="Enter Unique ID" required>
         <input type="text" name="person_name" class="form-control mb-3" placeholder="Enter Name" required>
         <input type="email" name="person_email" class="form-control mb-3" placeholder="Enter Email" required>
-        <button type="submit" class="btn btn-primary w-100">Capture Image</button>
+        <button type="submit" class="btn btn-primary w-100">Submit user's info</button>
     </form>
 
     <hr>
 
     <form action="{{ url_for('train') }}" method="post" class="text-center">
-        <button type="submit" class="btn btn-warning w-100">Train Model</button>
+        <button type="submit" class="btn btn-warning w-100">Register the user</button>
     </form>
 
     <hr>
@@ -24,18 +24,31 @@
         <input type="text" name="teacher_name" class="form-control mb-3" placeholder="Enter Teacher's Name" required>
         <button type="submit" class="btn btn-success w-100">Test & Recognize</button>
     </form>
+    <hr>
+
+    <!-- <div class="text-center">
+        <a href="{{ url_for('download_attendance') }}" class="btn btn-info w-100">Download Attendance File</a>
+    </div> -->
 </div>
 
-{% if show_popup %} 
+{% if show_popup %}
 <script>
-    window.onload = function() {
+    window.onload = function () {
         let confirmView = confirm("Attendance has been saved successfully! Would you like to open the Excel file?");
         if (confirmView) {
-            window.location.href = "{{ url_for('open_excel') }}";
+            window.location.href = "/open_excel";
         } else {
-            window.location.href = "{{ url_for('home') }}";
+            let download = confirm("Would you like to download the attendance file instead?");
+            if (download) {
+                window.location.href = "/download_attendance";
+            } else {
+                window.location.href = "/";
+            }
         }
-    };
+    }
 </script>
+
+
+
 {% endif %}
-{% endblock %} 
+{% endblock %}

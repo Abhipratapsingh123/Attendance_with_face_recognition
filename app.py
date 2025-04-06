@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify,redirect, url_for
+from flask import send_file
 import subprocess
 import os
 import webbrowser
@@ -24,7 +25,7 @@ def capture():
     subprocess.Popen(["python", "capturing_images.py", person_id, person_name, person_email])
 
     # Redirect to home page after capturing starts
-    return redirect(url_for('home'))
+    return redirect(url_for('home')) 
 
 # training route
 @app.route('/train', methods=['POST'])
@@ -54,13 +55,23 @@ def start_testing():
 
 @app.route('/attendance_popup')
 def attendance_popup():
+    if not os.path.exists(attendance_file):
+        return render_template('attendance_popup.html', message="Attendance file not found.")
     return render_template('attendance_popup.html', attendance_file=attendance_file)
 
 @app.route('/open_excel')
 def open_excel():
     if os.path.exists(attendance_file):
         webbrowser.open(attendance_file)  # Opens Excel file
+    else:
+        return render_template('home.html', message="Attendance file not found.")
     return redirect(url_for('home'))
 
+@app.route('/download_attendance')
+def download_attendance():
+    if os.path.exists(attendance_file):
+        return send_file(attendance_file, as_attachment=True)
+    return render_template('home.html', message="Attendance file not found.")
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run() 

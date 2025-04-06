@@ -10,7 +10,12 @@
             if (confirmView) {
                 window.location.href = "/open_excel";
             } else {
-                window.location.href = "/";
+                let download = confirm("Would you like to download the attendance file instead?");
+                if (download) {
+                    window.location.href = "/download_attendance";
+                } else {
+                    window.location.href = "/";
+                }
             }
         }
     </script>

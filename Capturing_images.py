@@ -61,7 +61,9 @@ while True:
 
     # Detect faces
     faces = face_detector.detectMultiScale(
-        gray_frame, scaleFactor=1.2, minNeighbors=6, minSize=(30, 30)
+        gray_frame, scaleFactor=1.2,
+        minNeighbors=6,
+        minSize=(30, 30)
     )
 
     for (x, y, w, h) in faces:

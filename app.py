@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify,redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask import send_file
 import subprocess
 import os
@@ -8,10 +8,13 @@ app = Flask(__name__)
 
 # Define attendance file path
 attendance_file = os.path.join("database", "attendance.xlsx")
+registered_users = os.path.join("database", "users.csv")
+
 
 @app.route('/')
 def home():
     return render_template('home.html')
+
 
 @app.route('/capture', methods=['POST'])
 def capture():
@@ -22,12 +25,15 @@ def capture():
         return jsonify({"error": "Person ID and Name are required"}), 400
 
     # Run capturing script with person_id and person_name
-    subprocess.Popen(["python", "capturing_images.py", person_id, person_name, person_email])
+    subprocess.Popen(["python", "capturing_images.py",
+                     person_id, person_name, person_email])
 
     # Redirect to home page after capturing starts
-    return redirect(url_for('home')) 
+    return redirect(url_for('home'))
 
 # training route
+
+
 @app.route('/train', methods=['POST'])
 def train():
      # Run training script and wait for completion
@@ -37,18 +43,18 @@ def train():
     return redirect(url_for('home'))
 
 
-#testing route
+# testing route
 @app.route("/start_testing", methods=["POST"])
 def start_testing():
     teacher_name = request.form.get("teacher_name")
-    
+
     if not teacher_name:
         return jsonify({"error": "Teacher name is required"}), 400
 
     try:
         subprocess.run(["python", "testing.py", teacher_name], check=True)
         return redirect(url_for('attendance_popup'))
-    
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -59,6 +65,7 @@ def attendance_popup():
         return render_template('attendance_popup.html', message="Attendance file not found.")
     return render_template('attendance_popup.html', attendance_file=attendance_file)
 
+
 @app.route('/open_excel')
 def open_excel():
     if os.path.exists(attendance_file):
@@ -67,11 +74,22 @@ def open_excel():
         return render_template('home.html', message="Attendance file not found.")
     return redirect(url_for('home'))
 
+
 @app.route('/download_attendance')
 def download_attendance():
     if os.path.exists(attendance_file):
         return send_file(attendance_file, as_attachment=True)
     return render_template('home.html', message="Attendance file not found.")
 
+
+@app.route('/registered_users')
+def download_registered_users():
+    if os.path.exists(registered_users):
+        webbrowser.open(registered_users)
+    else:
+        return render_template('home.html', message="Registered users file not found.")
+    return redirect(url_for('home'))
+
+
 if __name__ == "__main__":
-    app.run() 
+    app.run(debug=True)  

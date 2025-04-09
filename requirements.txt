@@ -40,3 +40,4 @@ WTForms==3.2.1
 gunicorn
 opencv-python-headless==4.10.0.82
 numpy==1.26.4
+pandas

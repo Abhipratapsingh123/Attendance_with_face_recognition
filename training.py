@@ -5,10 +5,6 @@ import os
 # Initialize LBPH Face Recognizer
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-# Load the face detector
-face_detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-
-
 # Get all images and their respective IDs
 faces, ids = [], []
 
@@ -23,7 +19,7 @@ for filename in os.listdir(uploads):
             continue  # Skip invalid images
 
         # Resize images to ensure consistency
-        image = cv2.resize(image, (100, 100))  # Resize as per requirement
+        image = cv2.resize(image, (100, 100))  # Resize 
         face_id = int(filename.split(".")[1])  # Extract ID from filename
 
         faces.append(image)

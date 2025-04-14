@@ -6,7 +6,7 @@ import webbrowser
 
 app = Flask(__name__)
 
-# Define attendance file path
+# Define  paths for files
 attendance_file = os.path.join("database", "attendance.xlsx")
 registered_users = os.path.join("database", "users.csv")
 
@@ -21,10 +21,10 @@ def capture():
     person_id = request.form.get("person_id")
     person_name = request.form.get("person_name")
     person_email = request.form.get("person_email", "default@example.com")
-    if not person_id or not person_name:
-        return jsonify({"error": "Person ID and Name are required"}), 400
+    if not person_id or not person_name or not person_email:
+        return jsonify({"error": "Person ID , Name and Email-id are required"}), 400
 
-    # Run capturing script with person_id and person_name
+    # Run capturing script with person_id , person_name and email id
     subprocess.Popen(["python", "capturing_images.py",
                      person_id, person_name, person_email])
 
@@ -36,7 +36,7 @@ def capture():
 
 @app.route('/train', methods=['POST'])
 def train():
-     # Run training script and wait for completion
+    # Run training script and wait for completion
     subprocess.run(["python", "training.py"], check=True)
 
     # Redirect to home page after training completes
@@ -53,18 +53,12 @@ def start_testing():
 
     try:
         subprocess.run(["python", "testing.py", teacher_name], check=True)
-        return redirect(url_for('attendance_popup'))
+        return render_template("home.html", show_popup=True)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-@app.route('/attendance_popup')
-def attendance_popup():
-    if not os.path.exists(attendance_file):
-        return render_template('attendance_popup.html', message="Attendance file not found.")
-    return render_template('attendance_popup.html', attendance_file=attendance_file)
-
+# Route for opening excel file
 
 @app.route('/open_excel')
 def open_excel():
@@ -92,4 +86,4 @@ def download_registered_users():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)  
+    app.run(debug=True)

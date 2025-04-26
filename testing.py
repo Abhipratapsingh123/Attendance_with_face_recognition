@@ -15,7 +15,7 @@ EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 # sending email function
 
 
-def send_email(receiver_email, student_name, teacher_name, date):
+def send_email(receiver_email, student_name, teacher_name,subject, date):
     subject = "Attendance Marked Successfully"
     content = f"""
     Hello {student_name},
@@ -24,6 +24,7 @@ def send_email(receiver_email, student_name, teacher_name, date):
     
     - Date: {date}
     - Teacher: {teacher_name}
+    - Subject: {subject}
     - Status: Present
     
     Regards,
@@ -45,11 +46,12 @@ face_recognizer.read(
     "C://Users//abhip//Desktop//Minor-Project//models//lbph_classifier.yml")
 
 # Get the teacher's name from command-line arguments
-if len(sys.argv) < 2:
-    print("Error: Teacher name not provided.")
+if len(sys.argv) < 3:
+    print("Error: Teacher name and subject not provided.")
     sys.exit(1)
 
 teacher_name = sys.argv[1]
+subject = sys.argv[2]
 
 # Get the current date and day
 current_date = datetime.now().strftime("%Y-%m-%d")
@@ -60,14 +62,14 @@ database_folder = "database"
 os.makedirs(database_folder, exist_ok=True)
 
 # Define the file path for storing attendance
-attendance_file = os.path.join(database_folder, "attendance.xlsx")
+attendance_file = attendance_file = os.path.join(database_folder, f"attendance_{current_date}.xlsx")
 
 # Load existing attendance data if the file exists
 if os.path.exists(attendance_file):
     df_existing = pd.read_excel(attendance_file)
 else:
     df_existing = pd.DataFrame(
-        columns=["Date", "Day", "Teacher", "Student Name", "Status"])
+        columns=["Date", "Day", "Teacher","Subject", "Student Name", "Status"])
 
 
 # Load registered users from CSV file
@@ -118,7 +120,7 @@ while True:
     )
 
     for (x, y, w, h) in detections:
-        image_face = cv2.resize(image_gray[y:y + w, x:x + h], (width, height))
+        image_face = cv2.resize(image_gray[y:y + h, x:x + w], (width, height))
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
         id, confidence = face_recognizer.predict(image_face)
@@ -136,12 +138,12 @@ while True:
 
         if confidence >= 61 and name != "Unknown" and name not in marked_students:
             attendance_data.append(
-                [current_date, current_day, teacher_name, name, "P"])
+                [current_date, current_day, teacher_name,subject, name, "P"])
             marked_students.add(name)
             print(
                 f"Attendance marked for {name} (Confidence: {confidence:.2f})")
             if email:
-                send_email(email, name, teacher_name, current_date)
+                send_email(email, name, teacher_name,subject, current_date)
             hold_frames = recognition_delay
 
         elif name in marked_students:
@@ -170,7 +172,7 @@ cv2.destroyAllWindows()
 
 # Append new attendance data to the existing file
 df_new = pd.DataFrame(attendance_data, columns=[
-                      "Date", "Day", "Teacher", "Student Name", "Status"])
+                      "Date", "Day", "Teacher","Subject","Student Name", "Status"])
 df_final = pd.concat([df_existing, df_new], ignore_index=True)
 df_final.to_excel(attendance_file, index=False)
 

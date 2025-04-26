@@ -3,11 +3,16 @@ from flask import send_file
 import subprocess
 import os
 import webbrowser
+# from subject_summary import generate_summary_chart
+from datetime import datetime
+
 
 app = Flask(__name__)
 
 # Define  paths for files
-attendance_file = os.path.join("database", "attendance.xlsx")
+current_date = datetime.now().strftime("%Y-%m-%d")
+attendance_file = os.path.join(
+    "database", f"attendance_{current_date}.xlsx")
 registered_users = os.path.join("database", "users.csv")
 
 
@@ -47,12 +52,14 @@ def train():
 @app.route("/start_testing", methods=["POST"])
 def start_testing():
     teacher_name = request.form.get("teacher_name")
+    subject = request.form.get('subject')
 
-    if not teacher_name:
-        return jsonify({"error": "Teacher name is required"}), 400
+    if not teacher_name and subject:
+        return jsonify({"error": "Teacher name and subject is required"}), 400
 
     try:
-        subprocess.run(["python", "testing.py", teacher_name], check=True)
+        subprocess.run(
+            ["python", "testing.py", teacher_name, subject], check=True)
         return render_template("home.html", show_popup=True)
 
     except Exception as e:
@@ -60,12 +67,25 @@ def start_testing():
 
 # Route for opening excel file
 
+
 @app.route('/open_excel')
 def open_excel():
     if os.path.exists(attendance_file):
         webbrowser.open(attendance_file)  # Opens Excel file
     else:
-        return render_template('home.html', message="Attendance file not found.")
+        # Find all attendance files
+        attendance_files = [f for f in os.listdir("database") if f.startswith(
+            "attendance_") and f.endswith(".xlsx")]
+
+        if attendance_files:
+            # Sort files based on modified time, newest first
+            attendance_files.sort(key=lambda x: os.path.getmtime(
+                os.path.join("database", x)), reverse=True)
+            latest_file = os.path.join("database", attendance_files[0])
+            # Open the latest available attendance
+            webbrowser.open(latest_file)
+        else:
+            return render_template('home.html', message="No attendance files found.")
     return redirect(url_for('home'))
 
 
@@ -73,7 +93,19 @@ def open_excel():
 def download_attendance():
     if os.path.exists(attendance_file):
         return send_file(attendance_file, as_attachment=True)
-    return render_template('home.html', message="Attendance file not found.")
+    else:
+        # Find all attendance files
+        attendance_files = [f for f in os.listdir("database") if f.startswith(
+            "attendance_") and f.endswith(".xlsx")]
+
+        if attendance_files:
+            # Sort by modification time, latest first
+            attendance_files.sort(key=lambda x: os.path.getmtime(
+                os.path.join("database", x)), reverse=True)
+            latest_file = os.path.join("database", attendance_files[0])
+            return send_file(latest_file, as_attachment=True)
+        else:
+            return render_template('home.html', message="No attendance files found.")
 
 
 @app.route('/registered_users')

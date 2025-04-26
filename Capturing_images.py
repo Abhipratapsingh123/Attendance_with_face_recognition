@@ -87,7 +87,7 @@ while True:
 
     cv2.imshow("Capturing Faces", frame)
 
-    # Stop after capturing 25 images per person
+    # Stop after capturing 65 images per person
     if image_count >= 65:
         break
 

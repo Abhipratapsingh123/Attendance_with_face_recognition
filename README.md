@@ -3,6 +3,7 @@
 ## Project Overview
 
 This project implements an **automated attendance management system** using **facial recognition technology**. It captures student images, trains a machine learning model, recognizes faces in real-time, logs attendance in an Excel file, and sends email notifications to students automatically. The system is designed to replace manual attendance-taking methods and improve reliability and efficiency in educational and institutional environments.
+"Designed to run on a local machine" due to hardware access (webcam, email server).
 
 ---
 

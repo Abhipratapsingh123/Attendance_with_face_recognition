@@ -15,7 +15,7 @@ EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 # sending email function
 
 
-def send_email(receiver_email, student_name, teacher_name,subject, date):
+def send_email(receiver_email, student_name, teacher_name, subject, date):
     subject = "Attendance Marked Successfully"
     content = f"""
     Hello {student_name},
@@ -62,14 +62,15 @@ database_folder = "database"
 os.makedirs(database_folder, exist_ok=True)
 
 # Define the file path for storing attendance
-attendance_file = attendance_file = os.path.join(database_folder, f"attendance_{current_date}.xlsx")
+attendance_file = attendance_file = os.path.join(
+    database_folder, f"attendance_{current_date}.xlsx")
 
 # Load existing attendance data if the file exists
 if os.path.exists(attendance_file):
     df_existing = pd.read_excel(attendance_file)
 else:
     df_existing = pd.DataFrame(
-        columns=["Date", "Day", "Teacher","Subject", "Student Name", "Status"])
+        columns=["Date", "Day", "Teacher", "Subject", "Student Name", "Status"])
 
 
 # Load registered users from CSV file
@@ -124,7 +125,7 @@ while True:
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
         id, confidence = face_recognizer.predict(image_face)
-        if confidence < 55 or confidence>=95:
+        if confidence < 55 or confidence >= 95:
             name = "Unknown"
 
         else:
@@ -134,32 +135,32 @@ while True:
         cv2.putText(image, f"Name: {name}",
                     (x, y + h + 30), font, 1, (0, 255, 0), 2)
         cv2.putText(image, f"Confidence: {round(confidence, 2)}",
-                    (x, y + h + 60), font, 1, (0, 255, 0), 1)
+                    (x, y + h + 60), font, 1, (0, 255, 0), 2)
 
         if confidence >= 61 and name != "Unknown" and name not in marked_students:
             attendance_data.append(
-                [current_date, current_day, teacher_name,subject, name, "P"])
+                [current_date, current_day, teacher_name, subject, name, "P"])
             marked_students.add(name)
             print(
                 f"Attendance marked for {name} (Confidence: {confidence:.2f})")
             if email:
-                send_email(email, name, teacher_name,subject, current_date)
+                send_email(email, name, teacher_name, subject, current_date)
             hold_frames = recognition_delay
 
         elif name in marked_students:
             cv2.putText(image, "Already Marked, Press Q", (x, y + h + 90),
-                        font, 1, (0, 255, 0), 1)
+                        font, 1, (0, 255, 0), 2)
 
-        if confidence < 55 or confidence>=95:
+        if confidence < 55 or confidence >= 95:
             # Show the message for low confidence detection
             cv2.putText(image, "Face not recognized.", (x, y + h + 120),
                         font, 1, (0, 0, 255), 1)
 
     if hold_frames > 0:
         hold_frames -= 1
-    else:
-        if len(attendance_data) > 0:  # Someone was recognized
-            break  # Exit loop after the delay
+    # else:
+    #     if len(attendance_data) > 0:  # Someone was recognized
+    #         break  # Exit loop after the delay
 
     cv2.imshow("Face Recognition", image)
     key = cv2.waitKey(1)
@@ -170,9 +171,20 @@ while True:
 camera.release()
 cv2.destroyAllWindows()
 
+# Convert existing data into a dictionary (Student Name -> Index mapping)
+existing_status = dict(zip(df_existing['Student Name'], df_existing['Status']))
+
+# Add absent students
+for student_id, student_name in user_dict.items():
+    if student_name not in marked_students:
+        # If already marked Present in existing file, don't overwrite
+        if existing_status.get(student_name) != "P":
+            attendance_data.append(
+                [current_date, current_day, teacher_name, subject, student_name, "A"])
+
 # Append new attendance data to the existing file
 df_new = pd.DataFrame(attendance_data, columns=[
-                      "Date", "Day", "Teacher","Subject","Student Name", "Status"])
+                      "Date", "Day", "Teacher", "Subject", "Student Name", "Status"])
 df_final = pd.concat([df_existing, df_new], ignore_index=True)
 df_final.to_excel(attendance_file, index=False)
 

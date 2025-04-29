@@ -5,6 +5,7 @@ import os
 import webbrowser
 # from subject_summary import generate_summary_chart
 from datetime import datetime
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -115,6 +116,20 @@ def download_registered_users():
     else:
         return render_template('home.html', message="Registered users file not found.")
     return redirect(url_for('home'))
+
+
+@app.route('/dashboard')
+def dashboard():
+    files = [f for f in os.listdir("database") if f.startswith(
+        "attendance_") and f.endswith(".xlsx")]
+    
+    records = []
+
+    for file in files:
+        df = pd.read_excel(os.path.join("database", file))
+        records.extend(df.to_dict(orient='records'))
+
+    return render_template("dashboard.html", records=records)
 
 
 if __name__ == "__main__":

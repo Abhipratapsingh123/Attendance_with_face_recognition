@@ -30,18 +30,19 @@ This project implements an **automated attendance management system** using **fa
 - Git & GitHub for version control
 
 ## How to use on your system
-- First, download the source code to your system
-- Now create a file named ".env" in the main folder and enter your email credentials to implement the email notification service
-- Enter "EMAIL_USER=your email id" and "EMAIL_PASSWORD=app password of your email id"
+- First, download the source code to your system by cloning the repository
+- Now create a file named ".env" in the main folder and enter your email credentials to implement the email notification service(optional)
+- Enter "EMAIL_USER=your email id" and "EMAIL_PASSWORD=app password of your email id in the .env file"
 - Now open the terminal in the code editor (VS Code) and type the command "python app.py"
 - It runs the Flask application in the browser; open the localhost link
 - Now on the webpage, enter the unique ID, name, and email address, then press the "Submit User's Info" button
-- The camera will open in this step and take 63 photos, storing them in a new folder named "uploads". If the folder is not created and an error appears, then create the "uploads" folder manually
+- The camera will open in this step and take 65 photos, storing them in "uploads" folder.
 - Also, the user's information gets stored in the "users.csv" file located in the "database" folder
-- If an error occurs, you may need to create the "database" folder manually
 - After this, click on the "Register User" button, which trains an LBPH model on the captured photos and stores the model in the "models" folder
-- In the final step, enter the teacher's name and the respective subject, then click on the "Mark Attendance" button. The camera will start again and recognize the face trained by the model, storing the attendance records in the "database" folder
+- In the final step, enter the teacher's name and the respective subject, then click on the "Mark Attendance" button. The camera will start again and recognize the face using trained LBPH model, storing the attendance records in the "database" folder
 - You can view and download attendance records from the webpage
+- You can also view the registered users.
+- You can view overall attendance by clicking the "dashboard" button.
 
 
 

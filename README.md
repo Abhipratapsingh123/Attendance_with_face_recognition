@@ -13,7 +13,7 @@ This project implements an **automated attendance management system** using **fa
 - Image capture and storage for training
 - Face recognition using the **LBPH algorithm**
 - Attendance logging in Excel format
-- Automated email notifications via SMTP
+- Automated email notifications via Yagmail
 - Modular Python code with structured scripts
 - Version-controlled with Git 
 

@@ -5,7 +5,7 @@ import csv
 
 # Initialize the face detector
 face_detector = cv2.CascadeClassifier(
-    "C:\\Users\\abhip\\Desktop\\Minor-Project\\models\\haarcascade_frontalface_default.xml")
+    "/workspaces/Attendance_with_face_recognition/models/haarcascade_frontalface_default.xml")
 
 # Start video capture
 camera = cv2.VideoCapture(0)

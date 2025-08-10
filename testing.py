@@ -40,10 +40,10 @@ def send_email(receiver_email, student_name, teacher_name, subject, date):
 
 # Load the face detector and recognizer
 face_detector = cv2.CascadeClassifier(
-    "C:\\Users\\abhip\\Desktop\\Minor-Project\\models\\haarcascade_frontalface_default.xml")
+    "/workspaces/Attendance_with_face_recognition/models/haarcascade_frontalface_default.xml")
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 face_recognizer.read(
-    "C://Users//abhip//Desktop//Minor-Project//models//lbph_classifier.yml")
+    "/workspaces/Attendance_with_face_recognition/models/lbph_classifier.yml")
 
 # Get the teacher's name from command-line arguments
 if len(sys.argv) < 3:
@@ -74,7 +74,7 @@ else:
 
 
 # Load registered users from CSV file
-user_data_file = "C:\\Users\\abhip\\Desktop\\Minor-Project\\database\\users.csv"
+user_data_file = "/workspaces/Attendance_with_face_recognition/database/users.csv"
 user_dict = {}
 email_dict = {}
 

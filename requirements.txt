@@ -41,3 +41,5 @@ gunicorn
 opencv-python-headless==4.10.0.82
 numpy==1.26.4
 pandas
+opencv-contrib-python
+

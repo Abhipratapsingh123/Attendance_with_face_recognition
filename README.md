@@ -33,6 +33,7 @@ This project implements an **automated attendance management system** using **fa
 - First, download the source code to your system by cloning the repository
 - Now create a file named ".env" in the main folder and enter your email credentials to implement the email notification service(optional)
 - Enter "EMAIL_USER=your email id" and "EMAIL_PASSWORD=app password of your email id in the .env file"
+- Adjust the file paths in the code according to your system
 - Now open the terminal in the code editor (VS Code) and type the command "python app.py"
 - It runs the Flask application in the browser; open the localhost link
 - Now on the webpage, enter the unique ID, name, and email address, then press the "Submit User's Info" button
